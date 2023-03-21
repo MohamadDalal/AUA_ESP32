@@ -4,15 +4,17 @@
 
 #include <SPI.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-#include <IRremoteESP8266.h>
-#include <IRutils.h>
+//#include <HTTPClient.h>
+//#include <ArduinoJson.h>
+
 #include "AUA.h"
+//#include "IR_Remote.h"        // Cannot include this because it is included in Menus.h
+#include "Menus.h"
 
 /*-------------------------------------------------------------------------------------------------------------------------
 Source for WiFi: https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-arduino/#3 
 Source for HTTP: https://randomnerdtutorials.com/esp32-http-get-post-arduino/
+Source for object declaration "without instansiation": https://forum.arduino.cc/t/c-object-instantiation-in-setup/337684 Used in IR_Remote
  
 -------------------------------------------------------------------------------------------------------------------------*/
 
@@ -50,26 +52,16 @@ bool firstTime = false;
 // Set timer to 5 seconds (5000)
 unsigned long timerDelay = 60000;
 AUA ArcAPI = AUA();
+//IR_Remote IR_Driver = IR_Remote(33);    // Seems like I cannot declare the object here and initialize it in setup. So it will be initialized here.
+//IR_Remote IR_Driver()                   // Seems that if I use this. I cannot call any methods in the object, as it will tell me that the method does not exist.
+IR_Remote IR_Driver = IR_Remote();
+Menu menuList[2];
+int menuListIndex = 0;
+//Menu baseMenu(&u8g2, 0);
 
-const int IR_KEY_1 = 0xFFA25D; //Old value: 0xFD00FF;
-const int IR_KEY_2 = 0xFF629D; //Old value: 0xFD807F;
-const int IR_KEY_3 = 0xFFE21D; //Old value: 0xFD40BF;
-const int IR_KEY_4 = 0xFF22DD; //Old value: 0xFD20DF;
-const int IR_KEY_5 = 0xFF02FD; //Old value: 0xFDA05F;
-const int IR_KEY_6 = 0xFFC23D; //Old value: 0xFD609F;
-const int IR_KEY_7 = 0xFFE01F; //Old value: 0xFD10EF;
-const int IR_KEY_8 = 0xFFA857; //Old value: 0xFD906F;
-const int IR_KEY_9 = 0xFF906F; //Old value: 0xFD50AF;
-const int IR_KEY_0 = 0xFF9867;//Old value: 0xFDB04F;
-const int IR_KEY_STAR = 0xFF6897; //Old value: 0xFD30CF;
-const int IR_KEY_HASH = 0xFFB04F; //Old value: 0xFD708F;
-const int IR_KEY_UP_ARROW = 0xFF18E7; //Old value: 0xFD8877;
-const int IR_KEY_DOWN_ARROW = 0xFF4AB5; //Old value: 0xFD9867;
-const int IR_KEY_RIGHT_ARROW = 0xFF5AA5; //Old value: 0xFD6897;
-const int IR_KEY_LEFT_ARROW = 0xFF10EF; //Old value: 0xFD28D7;
-const int IR_KEY_OK = 0xFF38C7; //Old value: 0xFDA857;
 
-decode_results results;
+
+
 
 
 void initWiFi() {
@@ -92,6 +84,11 @@ void setup()
   u8g2.setFont(u8g2_font_ncenB08_tr);       // Choose font
   u8g2.setBitmapMode(1);                    // Bitmaps go over each other
   initWiFi();
+  IR_Driver.isInitialized();
+  IR_Driver.init(33);
+  menuList[0] =  Menu(&u8g2, 0);
+  menuList[1] =  Menu(&u8g2, 1);
+  //Serial.print("The ID of the base menu is: "); Serial.println(baseMenu.getMenuID());
   Serial.println("Setup ran fully");
   delay(2000);
 }
@@ -99,9 +96,15 @@ void setup()
 void loop() 
 {
  if ((millis() - lastTime) > timerDelay or !firstTime) {
-    String RecentPlay = ArcAPI.GetRecentPlay();
-    Serial.println(RecentPlay);
+    //String RecentPlay = ArcAPI.GetRecentPlay();
+    //Serial.println(RecentPlay);
     firstTime = true;
     lastTime = millis();
   }
+  //baseMenu.drawScreen();
+  menuList[menuListIndex].drawScreen();
+  menuListIndex = menuList[menuListIndex].decodeInput(IR_Driver.IR_Read());
+  /*switch(IR_Driver.IR_Read()){
+    case IR_KEY::N1           : Serial.println(IR_KEY::N1);              break;
+  }*/
 }
