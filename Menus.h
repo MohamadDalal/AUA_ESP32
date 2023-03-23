@@ -7,7 +7,7 @@
 
 class Menu{
 
-  private:
+  protected:
     U8G2* u8g2;
     bool Initialized = false;
     int menuID=-1;
@@ -17,10 +17,10 @@ class Menu{
   public:
     Menu();
     Menu(U8G2* Display, int ID);
-    void init(U8G2* Display, int ID);
+    virtual void init(U8G2* Display, int ID);
     bool isInitialized();
-    void drawScreen();
-    int decodeInput(int input);               // Decodes input provided by menu manager or input manager and returns ID of the new menu to be used. Returns -1 if no menu change is needed.
+    virtual void drawScreen();
+    virtual int decodeInput(int input);               // Decodes input provided by menu manager or input manager and returns ID of the new menu to be used. Returns -1 if no menu change is needed.
     int getMenuID();
     int getPrevMenuID();
     void setPrevMenuID(int ID);
@@ -29,7 +29,7 @@ class Menu{
 
 class MenuOption{
 
-  private:
+  protected:
     bool Initialized = false;
     int nextMenu=-1;
     

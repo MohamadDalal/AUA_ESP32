@@ -21,29 +21,30 @@ bool Menu::isInitialized(){
 void Menu::drawScreen(){
   if(!isInitialized()){return;}
   // Later when a display manager is implemented remove the clear and send buffer from this class, and let the display manager do it instead.
-  // Maybe also make a pointer to a U8G2 object an argument of this method instead of an attribute of the entire class.
-  this->u8g2->clearBuffer();
+  // Maybe also make a pointer to a U8G2 object an argument of this method instead of an attribute of the entire class. (Done?)
+  //this->u8g2->clearBuffer();
   //this->u8g2->drawStr(16, 26, "Welcome to the base");
   //this->u8g2->drawStr(16, 42, "Menu class!!");
   this->u8g2->drawStr(16, 26, "Welcome to menu");
   this->u8g2->setCursor(62,42);
   this->u8g2->print(this->menuID);
-  this->u8g2->sendBuffer();
+  //this->u8g2->sendBuffer();
 }
 
 int Menu::decodeInput(int input){
   int returnValue = this->menuID;
   switch(input){
-    case IR_KEY::RIGHT_ARROW : Serial.println("Got Right Arrow"); returnValue = (this->menuID+1)%2; break;
-    case IR_KEY::LEFT_ARROW  : Serial.println("Got Left Arrow"); returnValue = (2+(this->menuID-1))%2; break;
-    default                 : returnValue = this->menuID;
+    case IR_KEY::RIGHT_ARROW  : Serial.println("Got Right Arrow"); returnValue = (this->menuID+1)%3; break;
+    case IR_KEY::LEFT_ARROW   : Serial.println("Got Left Arrow"); returnValue = (3+(this->menuID-1))%3; break;
+    case IR_KEY::STAR         : Serial.println("Got Star"); returnValue = this->prevMenuID; break;
+    default                   : returnValue = this->menuID;
   }
   return returnValue;
 }
 
 int Menu::getMenuID(){return this->menuID;}
 
-void Menu::setPrevMenuID(int ID){this->menuID = ID;}
+void Menu::setPrevMenuID(int ID){this->prevMenuID = ID;}
 
 
 
