@@ -15,9 +15,11 @@ String AUA::GetRecentPlay(){
   // Putting JsonDocuments inside the function leads to the program crashing. Probably because they are static and not dynamic objects
   //Check WiFi connection status
   if(WiFi.status()== WL_CONNECTED){
-    char UserRequest[66] = "";
+    char UserRequest[84] = "";
     strcat(UserRequest, this->URI);
-    strcat(UserRequest, "user/info?usercode=440498495");
+    strcat(UserRequest, "user/info?usercode=");
+    strcat(UserRequest, AUAUserCode);
+    strcat(UserRequest, "&withsonginfo=true");
     Serial.println("Getting user data");
     UserRaw = httpGETRequest(UserRequest);
     Serial.println(UserRaw);
@@ -35,42 +37,19 @@ String AUA::GetRecentPlay(){
       ReturnJson["message"] = UserJson["message"];
     }
     else{
-      int SongDiff = UserJson["content"]["recent_score"][0]["difficulty"];
-      char InfoRequest[128] = "";
-      strcat(InfoRequest, this->URI);
-      strcat(InfoRequest, "song/info?songid=");
-      strcat(InfoRequest, UserJson["content"]["recent_score"][0]["song_id"]);
-      Serial.println("Getting song info");
-      InfoRaw = httpGETRequest(InfoRequest);
-      Serial.println(InfoRaw);
-      DeserializationError error = deserializeJson(InfoJson, InfoRaw);
-      if (error) {
-        Serial.print("deserializeJson() failed: ");
-        Serial.println(error.c_str());
-        ReturnJson["status"] = -122;
-        ReturnJson["message"] = error.c_str();
-      }
-      else if(InfoJson["status"] != 0){
-        Serial.print("Api error with status "); Serial.print(InfoJson["status"] | 0); Serial.println(":");
-        Serial.println(InfoJson["message"] | "No message");
-        ReturnJson["status"] = InfoJson["status"];
-        ReturnJson["message"] = InfoJson["message"];
-      }
-      else{
-        Serial.println("Done with the requests");
-        ReturnJson["status"] = InfoJson["status"];
-        ReturnJson["user_name"] = UserJson["content"]["account_info"]["name"];
-        ReturnJson["user_rating"] = UserJson["content"]["account_info"]["rating"];
-        ReturnJson["score"] = UserJson["content"]["recent_score"][0]["score"];
-        ReturnJson["play_rating"] = UserJson["content"]["recent_score"][0]["rating"];
-        ReturnJson["near_count"] = UserJson["content"]["recent_score"][0]["near_count"];
-        ReturnJson["miss_count"] = UserJson["content"]["recent_score"][0]["miss_count"];
-        ReturnJson["perfect_count"] = UserJson["content"]["recent_score"][0]["perfect_count"];
-        ReturnJson["shiny_perfect_count"] = UserJson["content"]["recent_score"][0]["shiny_perfect_count"];
-        ReturnJson["name_en"] = InfoJson["content"]["difficulties"][SongDiff]["name_en"];
-        ReturnJson["artist"] = InfoJson["content"]["difficulties"][SongDiff]["artist"];
-        ReturnJson["chart_potential"] = InfoJson["content"]["difficulties"][SongDiff]["rating"];
-      }
+      Serial.println("Done with the requests");
+      ReturnJson["status"] = UserJson["status"];
+      ReturnJson["user_name"] = UserJson["content"]["account_info"]["name"];
+      ReturnJson["user_rating"] = UserJson["content"]["account_info"]["rating"];
+      ReturnJson["score"] = UserJson["content"]["recent_score"][0]["score"];
+      ReturnJson["play_rating"] = UserJson["content"]["recent_score"][0]["rating"];
+      ReturnJson["near_count"] = UserJson["content"]["recent_score"][0]["near_count"];
+      ReturnJson["miss_count"] = UserJson["content"]["recent_score"][0]["miss_count"];
+      ReturnJson["perfect_count"] = UserJson["content"]["recent_score"][0]["perfect_count"];
+      ReturnJson["shiny_perfect_count"] = UserJson["content"]["recent_score"][0]["shiny_perfect_count"];
+      ReturnJson["name_en"] = UserJson["content"]["songinfo"][0]["name_en"];
+      ReturnJson["artist"] = UserJson["content"]["songinfo"][0]["artist"];
+      ReturnJson["chart_potential"] = UserJson["content"]["songinfo"][0]["rating"];
     }
   }
   else {

@@ -9,6 +9,8 @@
 // Which is because bothe AUA.cpp and the main file are importing AUA.h
 //#include "config_AUA.h"
 
+class AUA;
+
 class AUA{
 
   private:

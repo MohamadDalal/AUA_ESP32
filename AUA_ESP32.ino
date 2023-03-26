@@ -17,7 +17,7 @@ Source for WiFi: https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-ar
 Source for HTTP: https://randomnerdtutorials.com/esp32-http-get-post-arduino/
 Source for object declaration "without instansiation": https://forum.arduino.cc/t/c-object-instantiation-in-setup/337684 Used in IR_Remote
 Constructor tutorial: https://www.geeksforgeeks.org/order-constructor-destructor-call-c/
- 
+Virtual declaration for runtime polymorphism: https://www.geeksforgeeks.org/virtual-function-cpp/
 -------------------------------------------------------------------------------------------------------------------------*/
 
 /*-------------------------------------Pins--------------------------------
@@ -71,12 +71,17 @@ int newMenuListIndex = 0;
 
 
 class Test_List_Menu: public List_Menu{
+  private:
+    static const int optionCount = 5;
+    List_Option *optionArr[optionCount];
+  
   public:
     Test_List_Menu(){};
-    
+    //Test_List_Menu(): List_Menu(){};                                    // I can't get this to work idk why.
     Test_List_Menu(U8G2* Display, int ID){
       init(Display, ID);
     };
+    //Test_List_Menu(U8G2* Display, int ID): List_Menu(Display, ID){};    // I can't get this to work idk why.
     void init(U8G2* Display, int ID){
       this->u8g2 = Display;
       this->menuID = ID;
@@ -156,18 +161,18 @@ void loop()
     case IR_KEY::N1           : Serial.println(IR_KEY::N1);              break;
   }*/
   u8g2.clearBuffer();
-  //Serial.println("Checkpoint 1");
+  Serial.println("Checkpoint 1");
   menuList[currentMenuListIndex]->drawScreen();
-  //Serial.println("Checkpoint 2");
+  Serial.println("Checkpoint 2");
   newMenuListIndex = menuList[currentMenuListIndex]->decodeInput(IR_Driver.IR_Read());
-  //Serial.println("Checkpoint 3");
+  Serial.println("Checkpoint 3");
   if(!(newMenuListIndex == currentMenuListIndex)){
-    //Serial.println("Checkpoint 4");
+    Serial.println("Checkpoint 4");
     menuList[newMenuListIndex]->setPrevMenuID(currentMenuListIndex);
-    //Serial.println("Checkpoint 5");
+    Serial.println("Checkpoint 5");
     currentMenuListIndex = newMenuListIndex;
-    //Serial.println("Checkpoint 6");
+    Serial.println("Checkpoint 6");
   }
-  //Serial.println("Checkpoint 7");
+  Serial.println("Checkpoint 7");
   u8g2.sendBuffer();
 }
