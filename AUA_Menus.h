@@ -58,15 +58,15 @@ class AUA_Main_Menu: public List_Menu{
 class AUA_User_Info_Menu: Menu{
   public:
     AUA_User_Info_Menu();
-    AUA_User_Info_Menu(U8G2* Display, int ID) : Menu(Display, ID){};
+    AUA_User_Info_Menu(U8G2* Display, int ID);
     void drawScreen();
   
 };
 
 class AUA_Recent_Menu: Menu{
   public:
-    AUA_Recent_Menu() : Menu(){};
-    AUA_Recent_Menu(U8G2* Display, int ID) : Menu(Display, ID){};
+    AUA_Recent_Menu();
+    AUA_Recent_Menu(U8G2* Display, int ID);
     void drawScreen();
   
 };

@@ -69,11 +69,13 @@ int currentMenuListIndex = 0;
 int newMenuListIndex = 0;
 //Menu baseMenu(&u8g2, 0);
 
-
+// Check this later to see about creating the option list before creating the object, then passing a pointer to that list when instantiating the object.
+// https://stackoverflow.com/questions/19611315/is-there-a-way-to-specify-size-of-array-in-base-class-in-inherited-class
 class Test_List_Menu: public List_Menu{
+  // Declaring my own optionCount and optionArr is crashing the program
   private:
     static const int optionCount = 5;
-    List_Option *optionArr[optionCount];
+    //List_Option *optionArr[optionCount];
   
   public:
     Test_List_Menu(){};
@@ -120,7 +122,7 @@ void setup()
   u8g2.begin();                             // Start screen
   u8g2.setFont(u8g2_font_ncenB08_tr);       // Choose font
   u8g2.setBitmapMode(1);                    // Bitmaps go over each other
-  initWiFi();
+  //initWiFi();
   IR_Driver.isInitialized();
   IR_Driver.init(33);
   /*for(int i=0; i<menuListSize; i++){

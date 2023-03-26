@@ -23,7 +23,7 @@ class List_Menu : public Menu {
     //                                                    // I will not do this because I would like to use this classes init function and initialize using it.
     List_Menu(U8G2* Display, int ID);
     void init(U8G2* Display, int ID);
-    virtual void drawScreen();
+    void drawScreen();
     int decodeInput(int input);                         // Decodes input provided by menu manager or input manager and returns ID of the new menu to be used. Returns -1 if no menu change is needed.
     
 };

@@ -37,6 +37,10 @@ void List_Menu::drawScreen(){
       break;
     default:
       Serial.println("Error. Cursor index is out of bounds");
+      Serial.println("More Info:");
+      Serial.print("\tCursor index: ");Serial.println(this->cursorIndex);
+      Serial.print("\tOption index: ");Serial.println(this->optionIndex);
+      Serial.print("\tOption count: ");Serial.println(this->optionCount);
   }
   this->u8g2->drawStr(8, (this->cursorIndex * 16 + 10), "-->");
   //Serial.println("New func here");
@@ -78,6 +82,7 @@ int List_Menu::decodeInput(int input){
     case IR_KEY::RIGHT_ARROW  : Serial.println("Got Right Arrow"); returnValue = this->optionArr[this->optionIndex]->getNextMenu(); break;
     case IR_KEY::LEFT_ARROW   : Serial.println("Got Left Arrow"); break;
     //case IR_KEY::STAR         : Serial.println("Got Star"); returnValue = this->prevMenuID; break;
+    case IR_KEY::HASH         : this->cursorIndex = 0;
     default                   : returnValue = this->menuID;
   }
   return returnValue;
